@@ -1,17 +1,19 @@
 {
-  "name": "raiym/instagram-php-scraper",
-  "description": "Instagram PHP Scraper. Get account information, photos and videos without any authorization",
+  "name": "saqijaan/instagram-scraper",
+  "description": "Instagram Scraper  based on raiym/instagram-php-scraper . Get account information, photos and videos without any authorization. for some blocked endpoints you can just place a cookie file and can retrive data bypassing instagram blockage",
   "keywords": [
     "instagram",
-    "scraper"
+    "scrapper",
+    "instagram stories",
+    "instagram dp"
   ],
   "type": "library",
-  "homepage": "https://github.com/raiym/instagram-php-scraper",
+  "homepage": "https://github.com/saqijaan/instagram-scrapper",
   "license": "MIT",
   "authors": [
     {
-      "name": "raiym",
-      "email": "r.kapishev@gmail.com"
+      "name": "Muhammad Saqib Ali",
+      "email": "saqiba874@gmail.com"
     }
   ],
   "require": {
@@ -36,6 +38,6 @@
     }
   },
   "support": {
-    "email": "r.kapishev@gmail.com"
+    "email": "saqiba874@gmail.com"
   }
 }
