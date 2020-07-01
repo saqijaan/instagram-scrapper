@@ -74,4 +74,4 @@ composer require saqijaan/instagram-scraper
 You can download it [here](https://getcomposer.org/download/).
 
 ## Examples
-See examples [here](https://github.com/saqijaan/instagram-scraper/tree/master/examples).
+See examples [here](https://github.com/saqijaan/instagram-scrapper/tree/master/examples).
