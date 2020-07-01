@@ -179,6 +179,36 @@ class Instagram
     }
 
     /**
+     * Set a cookie string for enabling cookie handling
+     *
+     * @param string $cookie
+     */
+    public static function setcookie($cookie)
+    {
+        Request::cookie($cookie);
+    }
+
+    /**
+     * Set a cookie file path for enabling cookie handling
+     *
+     * $cookieFile must be a correct path with write permission
+     *
+     * @param string $cookieFile - path to file for saving cookie
+     */
+    public static function setcookieFile($cookieFile)
+    {
+        Request::cookieFile($cookieFile);
+    }
+
+    /**
+     * Disable Cookie for all requests
+     */
+    public static function unSetCookie()
+    {
+        Request::setcookie('');
+    }
+
+    /**
      * @param string $username
      *
      * @return Account[]
