@@ -14,6 +14,14 @@ $account = $instagram->getAccountById(3);
 echo $account->getUsername();
 ```
 
+#Authentication via cookie
+```php
+$instagram = \InstagramScraper\Instagram::setcookieFile('cookie.txt');
+$instagram = new \InstagramScraper\Instagram();
+$account = $instagram->getAccountById(3);
+echo $account->getUsername();
+```
+
 Some methods do not require authentication: 
 ```php
 $instagram = new \InstagramScraper\Instagram();
@@ -55,18 +63,15 @@ $account = $instagram->getAccount('kevin');
 ### Using composer
 
 ```sh
-composer.phar require raiym/instagram-php-scraper
+composer.phar saqijaan/instagram-scraper
 ```
 or 
 ```sh
-composer require raiym/instagram-php-scraper
+composer require saqijaan/instagram-scraper
 ```
 
 ### If you don't have composer
 You can download it [here](https://getcomposer.org/download/).
 
 ## Examples
-See examples [here](https://github.com/postaddictme/instagram-php-scraper/tree/master/examples).
-
-## Other
-Java library: https://github.com/postaddictme/instagram-java-scraper
+See examples [here](https://github.com/saqijaan/instagram-scraper/tree/master/examples).
