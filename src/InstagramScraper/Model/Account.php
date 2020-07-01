@@ -453,7 +453,11 @@ class Account extends AbstractModel
                 $this->profilePicUrl = $value;
                 break;
             case 'profile_pic_url_hd':
-                $this->profilePicUrlHd = $value;
+            case 'hd_profile_pic_url_info':
+                if ( $prop == 'hd_profile_pic_url_info' ){
+                    $this->profilePicUrlHd = $value['url'];
+                }else
+                    $this->profilePicUrlHd = $value;
                 break;
             case 'biography':
                 $this->biography = $value;
@@ -464,6 +468,9 @@ class Account extends AbstractModel
             case 'edge_follow':
                 $this->followsCount = !empty($array[$prop]['count']) ? (int)$array[$prop]['count'] : 0;
                 break;
+            case 'following_count':
+                $this->followsCount = $value;
+                break;
             case 'edge_followed_by':
                 $this->followedByCount = !empty($array[$prop]['count']) ? (int)$array[$prop]['count'] : 0;
                 break;
@@ -472,6 +479,9 @@ class Account extends AbstractModel
                 break;
             case 'edge_owner_to_timeline_media':
                 $this->initMedia($array[$prop]);
+                break;
+            case 'media_count':
+                $this->mediaCount = $value;
                 break;
             case 'is_private':
                 $this->isPrivate = (bool)$value;

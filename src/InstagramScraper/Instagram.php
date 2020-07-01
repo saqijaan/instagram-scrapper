@@ -932,7 +932,8 @@ class Instagram
             throw new InstagramException((isset($responseArray['message']) ? $responseArray['message'] : 'Unknown Error'));
         }
 
-        return (Object)$responseArray['user'];
+        return Account::create($responseArray['user']);
+        // return (Object)$responseArray['user'];
     }
 
     
