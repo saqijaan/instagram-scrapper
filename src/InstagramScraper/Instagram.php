@@ -66,41 +66,6 @@ class Instagram
     }
 
     /**
-     * @param string $tag
-     *
-     * @return array
-     * @throws InstagramException
-     * @throws InstagramNotFoundException
-     */
-    public static function searchTagsByTagName($tag)
-    {
-        // TODO: Add tests and auth
-        $response = Request::get(Endpoints::getGeneralSearchJsonLink($tag));
-
-        if (static::HTTP_NOT_FOUND === $response->code) {
-            throw new InstagramNotFoundException('Account with given username does not exist.');
-        }
-
-        if (static::HTTP_OK !== $response->code) {
-            throw new InstagramException('Response code is ' . $response->code . '. Body: ' . static::getErrorBody($response->body) . ' Something went wrong. Please report issue.', $response->code);
-        }
-
-        $jsonResponse = json_decode($response->raw_body, true, 512, JSON_BIGINT_AS_STRING);
-        if (!isset($jsonResponse['status']) || $jsonResponse['status'] !== 'ok') {
-            throw new InstagramException('Response code is not equal 200. Something went wrong. Please report issue.');
-        }
-
-        if (!isset($jsonResponse['hashtags']) || empty($jsonResponse['hashtags'])) {
-            return [];
-        }
-        $hashtags = [];
-        foreach ($jsonResponse['hashtags'] as $jsonHashtag) {
-            $hashtags[] = Tag::create($jsonHashtag['hashtag']);
-        }
-        return $hashtags;
-    }
-
-    /**
      * @param stdClass|string $rawError
      *
      * @return string
@@ -208,39 +173,6 @@ class Instagram
         Request::setcookie('');
     }
 
-    /**
-     * @param string $username
-     *
-     * @return Account[]
-     * @throws InstagramException
-     * @throws InstagramNotFoundException
-     */
-    public function searchAccountsByUsername($username, $count = 10)
-    {
-        $response = Request::get(Endpoints::getGeneralSearchJsonLink($username, $count), $this->generateHeaders($this->userSession));
-
-        if (static::HTTP_NOT_FOUND === $response->code) {
-            throw new InstagramNotFoundException('Account with given username does not exist.');
-        }
-        if (static::HTTP_OK !== $response->code) {
-            throw new InstagramException('Response code is ' . $response->code . '. Body: ' . static::getErrorBody($response->body) . ' Something went wrong. Please report issue.', $response->code);
-        }
-
-        $jsonResponse = $this->decodeRawBodyToJson($response->raw_body);
-
-        if (!isset($jsonResponse['status']) || $jsonResponse['status'] !== 'ok') {
-            throw new InstagramException('Response code is not equal 200. Something went wrong. Please report issue.');
-        }
-        if (!isset($jsonResponse['users']) || empty($jsonResponse['users'])) {
-            return [];
-        }
-
-        $accounts = [];
-        foreach ($jsonResponse['users'] as $jsonAccount) {
-            $accounts[] = Account::create($jsonAccount['user']);
-        }
-        return $accounts;
-    }
 
     /**
      * @param $session
@@ -317,6 +249,168 @@ class Instagram
     {
         return $this->userAgent = null;
     }
+
+
+    /**
+     * @param string $username
+     *
+     * @return Account[]
+     * @throws InstagramException
+     * @throws InstagramNotFoundException
+     */
+    public function searchAccountsByUsername($username, $count = 10)
+    {
+        $response = Request::get(Endpoints::getGeneralSearchJsonLink($username, $count), $this->generateHeaders($this->userSession));
+
+        if (static::HTTP_NOT_FOUND === $response->code) {
+            throw new InstagramNotFoundException('Account with given username does not exist.');
+        }
+        if (static::HTTP_OK !== $response->code) {
+            throw new InstagramException('Response code is ' . $response->code . '. Body: ' . static::getErrorBody($response->body) . ' Something went wrong. Please report issue.', $response->code);
+        }
+
+        $jsonResponse = $this->decodeRawBodyToJson($response->raw_body);
+
+        if (!isset($jsonResponse['status']) || $jsonResponse['status'] !== 'ok') {
+            throw new InstagramException('Response code is not equal 200. Something went wrong. Please report issue.');
+        }
+        if (!isset($jsonResponse['users']) || empty($jsonResponse['users'])) {
+            return [];
+        }
+
+        $accounts = [];
+        foreach ($jsonResponse['users'] as $jsonAccount) {
+            $accounts[] = Account::create($jsonAccount['user']);
+        }
+        return $accounts;
+    }
+    
+    /**
+     * @param string $tag
+     *
+     * @return array
+     * @throws InstagramException
+     * @throws InstagramNotFoundException
+     */
+    public function searchTagsByTagName($tag)
+    {
+        // TODO: Add tests and auth
+        $response = Request::get(Endpoints::getGeneralSearchJsonLink($tag));
+
+        if (static::HTTP_NOT_FOUND === $response->code) {
+            throw new InstagramNotFoundException('Account with given username does not exist.');
+        }
+
+        if (static::HTTP_OK !== $response->code) {
+            throw new InstagramException('Response code is ' . $response->code . '. Body: ' . static::getErrorBody($response->body) . ' Something went wrong. Please report issue.', $response->code);
+        }
+
+        $jsonResponse = json_decode($response->raw_body, true, 512, JSON_BIGINT_AS_STRING);
+        if (!isset($jsonResponse['status']) || $jsonResponse['status'] !== 'ok') {
+            throw new InstagramException('Response code is not equal 200. Something went wrong. Please report issue.');
+        }
+
+        if (!isset($jsonResponse['hashtags']) || empty($jsonResponse['hashtags'])) {
+            return [];
+        }
+        $hashtags = [];
+        foreach ($jsonResponse['hashtags'] as $jsonHashtag) {
+            $hashtags[] = Tag::create($jsonHashtag['hashtag']);
+        }
+        return $hashtags;
+    }
+
+    /**
+     * @param string $tag
+     *
+     * @return array
+     * @throws InstagramException
+     * @throws InstagramNotFoundException
+     */
+    public function searchPlacesByName($place)
+    {
+        // TODO: Add tests and auth
+        $response = Request::get(Endpoints::getGeneralSearchJsonLink($tag));
+
+        if (static::HTTP_NOT_FOUND === $response->code) {
+            throw new InstagramNotFoundException('Account with given username does not exist.');
+        }
+
+        if (static::HTTP_OK !== $response->code) {
+            throw new InstagramException('Response code is ' . $response->code . '. Body: ' . static::getErrorBody($response->body) . ' Something went wrong. Please report issue.', $response->code);
+        }
+
+        $jsonResponse = json_decode($response->raw_body, true, 512, JSON_BIGINT_AS_STRING);
+        if (!isset($jsonResponse['status']) || $jsonResponse['status'] !== 'ok') {
+            throw new InstagramException('Response code is not equal 200. Something went wrong. Please report issue.');
+        }
+
+        if (!isset($jsonResponse['places']) || empty($jsonResponse['places'])) {
+            return [];
+        }
+
+        $places = [];
+        foreach ($jsonResponse['places'] as $jsonHashtag) {
+            $places[] = Location::create($jsonHashtag['place']);
+        }
+        return $places;
+    }
+
+    /**
+     * @param string $tag
+     *
+     * @return array
+     * @throws InstagramException
+     * @throws InstagramNotFoundException
+     */
+    public function searchAllByName($query)
+    {
+        // TODO: Add tests and auth
+        $response = Request::get(Endpoints::getGeneralSearchJsonLink($query));
+
+        if (static::HTTP_NOT_FOUND === $response->code) {
+            throw new InstagramNotFoundException('Account with given username does not exist.');
+        }
+
+        if (static::HTTP_OK !== $response->code) {
+            throw new InstagramException('Response code is ' . $response->code . '. Body: ' . static::getErrorBody($response->body) . ' Something went wrong. Please report issue.', $response->code);
+        }
+
+        $jsonResponse = json_decode($response->raw_body, true, 512, JSON_BIGINT_AS_STRING);
+        if (!isset($jsonResponse['status']) || $jsonResponse['status'] !== 'ok') {
+            throw new InstagramException('Response code is not equal 200. Something went wrong. Please report issue.');
+        }
+
+        
+        $hashtags = [];
+        $places = [];
+        $users = [];
+        
+        if (isset($jsonResponse['users']) && !empty($jsonResponse['users'])) {
+            foreach ($jsonResponse['users'] as $jsonAccount) {
+                $users[] = Account::create($jsonAccount['user']);
+            }
+        }
+
+        if (isset($jsonResponse['hashtags']) && !empty($jsonResponse['hashtags'])) {
+            foreach ($jsonResponse['hashtags'] as $jsonHashtag) {
+                $hashtags[] = Tag::create($jsonHashtag['hashtag']);
+            }
+        }
+
+        if (isset($jsonResponse['places']) && !empty($jsonResponse['places'])) {
+            foreach ($jsonResponse['places'] as $jsonAccount) {
+                $places[] = Location::create($jsonAccount['place']);
+            }
+        }
+
+        return [
+            'users' => $users,
+            'hashtags' => $hashtags,
+            'places' => $places
+        ];
+    }
+
 
     /**
      * Gets logged user feed.
@@ -908,7 +1002,7 @@ class Instagram
 
     /**
      * @param string $id
-     * @return Object
+     * @return Account
      * @throws InstagramException
      * @throws InstagramNotFoundException
      */
