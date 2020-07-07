@@ -888,7 +888,7 @@ class Instagram
                 !isset($jsonResponse['data']['shortcode_media']['edge_media_to_comment']['edges'])
                 || !isset($jsonResponse['data']['shortcode_media']['edge_media_to_comment']['count'])
                 || !isset($jsonResponse['data']['shortcode_media']['edge_media_to_comment']['page_info']['has_next_page'])
-                || !array_key_exists('end_cursor', $jsonResponse['data']['shortcode_media']['edge_media_to_comment']['page_info'])
+                || !array_key_exists('end_cuZ XHrsor', $jsonResponse['data']['shortcode_media']['edge_media_to_comment']['page_info'])
             ) {
                 throw new InstagramException('Response code is ' . $response->code . '. Body: ' . static::getErrorBody($response->body) . ' Something went wrong. Please report issue.', $response->code);
             }
@@ -1565,29 +1565,11 @@ class Instagram
      * @return array
      * @throws InstagramException
      */
-    public function getStories($reel_ids = null)
+    public function getStoriesByUserIds(array $reel_ids)
     {
-        $variables = ['precomposed_overlay' => false, 'reel_ids' => []];
-        if (empty($reel_ids)) {
-            $response = Request::get(Endpoints::getUserStoriesLink(),
-                $this->generateHeaders($this->userSession));
+        $variables = [ "reel_ids" => [],"tag_names" => [],"location_ids" => [],"highlight_reel_ids" => [],"precomposed_overlay" => false,"show_story_viewer_list" => false,"story_viewer_fetch_count" => 0,"story_viewer_cursor" => "","stories_video_dash_manifest" => false];
 
-            if ($response->code !== static::HTTP_OK) {
-                throw new InstagramException('Response code is ' . $response->code . '. Body: ' . static::getErrorBody($response->body) . ' Something went wrong. Please report issue.', $response->code);
-            }
-
-            $jsonResponse = $this->decodeRawBodyToJson($response->raw_body);
-
-            if (empty($jsonResponse['data']['user']['feed_reels_tray']['edge_reels_tray_to_reel']['edges'])) {
-                return [];
-            }
-
-            foreach ($jsonResponse['data']['user']['feed_reels_tray']['edge_reels_tray_to_reel']['edges'] as $edge) {
-                $variables['reel_ids'][] = $edge['node']['id'];
-            }
-        } else {
-            $variables['reel_ids'] = $reel_ids;
-        }
+        $variables['reel_ids'] = $reel_ids;
 
         $response = Request::get(Endpoints::getStoriesLink($variables),
             $this->generateHeaders($this->userSession));
@@ -1601,6 +1583,80 @@ class Instagram
         if (empty($jsonResponse['data']['reels_media'])) {
             return [];
         }
+
+        $stories = [];
+        foreach ($jsonResponse['data']['reels_media'] as $user) {
+            $UserStories = UserStories::create();
+            $UserStories->setOwner(Account::create($user['user']));
+            foreach ($user['items'] as $item) {
+                $UserStories->addStory(Story::create($item));
+            }
+            $stories[] = $UserStories;
+        }
+        return $stories;
+    }
+
+    /**
+     * @param array $tags - array of instagram tags
+     * @return array
+     * @throws InstagramException
+     */
+    public function getStoriesByTags(array $tags)
+    {
+        $variables = [ "reel_ids" => [],"tag_names" => [],"location_ids" => [],"highlight_reel_ids" => [],"precomposed_overlay" => false,"show_story_viewer_list" => false,"story_viewer_fetch_count" => 0,"story_viewer_cursor" => "","stories_video_dash_manifest" => false];
+        $variables['tag_names'] = $tags; 
+        $response = Request::get(Endpoints::getStoriesLink($variables),
+            $this->generateHeaders($this->userSession));
+
+        if ($response->code !== static::HTTP_OK) {
+            throw new InstagramException('Response code is ' . $response->code . '. Body: ' . static::getErrorBody($response->body) . ' Something went wrong. Please report issue.', $response->code);
+        }
+
+        $jsonResponse = $this->decodeRawBodyToJson($response->raw_body);
+
+        if (empty($jsonResponse['data']['reels_media'])) {
+            return [];
+        }
+        
+        $stories = [];
+        foreach ($jsonResponse['data']['reels_media'] as $user) {
+            $UserStories = UserStories::create();
+            $UserStories->setOwner(Account::create($user['owner']));
+            foreach ($user['items'] as $item) {
+                $UserStories->addStory(Story::create($item));
+            }
+            $stories[] = $UserStories;
+        }
+        return $stories;
+    }
+
+    /**
+     * @param array $location_ids - array of instagram location ids
+     * @return array
+     * @throws InstagramException
+     */
+    public function getStoriesByLocations(array $location_ids)
+    {
+        $variables = [ "reel_ids" => [],"tag_names" => [],"location_ids" => [],"highlight_reel_ids" => [],"precomposed_overlay" => false,"show_story_viewer_list" => false,"story_viewer_fetch_count" => 0,"story_viewer_cursor" => "","stories_video_dash_manifest" => false];
+        $variables['location_ids'] = $location_ids;
+
+        $response = Request::get(Endpoints::getStoriesLink($variables),
+            $this->generateHeaders($this->userSession));
+
+        if ($response->code !== static::HTTP_OK) {
+            throw new InstagramException('Response code is ' . $response->code . '. Body: ' . static::getErrorBody($response->body) . ' Something went wrong. Please report issue.', $response->code);
+        }
+
+        $jsonResponse = $this->decodeRawBodyToJson($response->raw_body);
+
+        if (empty($jsonResponse['data']['reels_media'])) {
+            return [];
+        }
+
+        print_r(
+            $jsonResponse
+        );
+        exit;
 
         $stories = [];
         foreach ($jsonResponse['data']['reels_media'] as $user) {

@@ -39,6 +39,7 @@ class Endpoints
     const URL_SIMILAR = 'https://www.instagram.com/graphql/query/?query_id=17845312237175864&id=4663052';
 
     const GRAPH_QL_QUERY_URL = 'https://www.instagram.com/graphql/query/?query_id={{queryId}}';
+    const GRAPH_QL_QUERY_HASH_URL = 'https://www.instagram.com/graphql/query/?query_hash={{queryhash}}';
 
     private static $requestMediaCount = 30;
 
@@ -169,11 +170,11 @@ class Endpoints
 
     public static function getUserStoriesLink()
     {
-        $url = self::getGraphQlUrl(InstagramQueryId::USER_STORIES, ['variables' => json_encode([])]);
+        $url = self::getGraphQlUrl(InstagramQueryId::USER_STORIES_HASH, ['variables' => json_encode([])]);
         return $url;
     }
 
-    public static function getGraphQlUrl($queryId, $parameters)
+    public static function getGraphQlUrlById($queryId, $parameters)
     {
         $url = str_replace('{{queryId}}', urlencode($queryId), static::GRAPH_QL_QUERY_URL);
         if (!empty($parameters)) {
@@ -183,9 +184,19 @@ class Endpoints
         return $url;
     }
 
+    public static function getGraphQlUrl($queryhash, $parameters)
+    {
+        $url = str_replace('{{queryhash}}', urlencode($queryhash), static::GRAPH_QL_QUERY_HASH_URL);
+        if (!empty($parameters)) {
+            $query_string = http_build_query($parameters);
+            $url .= '&' . $query_string;
+        }
+        return $url;
+    }
+
     public static function getStoriesLink($variables)
     {
-        $url = self::getGraphQlUrl(InstagramQueryId::STORIES, ['variables' => json_encode($variables)]);
+        $url = self::getGraphQlUrl(InstagramQueryId::STORIES_HASH, ['variables' => json_encode($variables)]);
         return $url;
     }
 
