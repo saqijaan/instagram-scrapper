@@ -10,6 +10,7 @@ use InstagramScraper\Exception\InstagramAgeRestrictedException;
 use InstagramScraper\Model\Account;
 use InstagramScraper\Model\Activity;
 use InstagramScraper\Model\Comment;
+use InstagramScraper\Model\HighLightReel;
 use InstagramScraper\Model\Like;
 use InstagramScraper\Model\Location;
 use InstagramScraper\Model\Media;
@@ -1596,6 +1597,85 @@ class Instagram
         return $stories;
     }
 
+    /**
+     * @param int $user_id - of instagram user ids
+     * @return array
+     * @throws InstagramException
+     */
+    public function getHighLightedStoriesByUserId($userId)
+    {
+        $variables = [
+            "user_id" => $userId,
+            "include_chaining" => true,
+            "include_reel" => true,
+            "include_suggested_users" => false,
+            "include_logged_out_extras" => false,
+            "include_highlight_reels" => true,
+            "include_live_status" => true,
+        ];
+
+        $response = Request::get(Endpoints::getHighlightedStories($variables),
+            $this->generateHeaders($this->userSession));
+
+        if ($response->code !== static::HTTP_OK) {
+            throw new InstagramException('Response code is ' . $response->code . '. Body: ' . static::getErrorBody($response->body) . ' Something went wrong. Please report issue.', $response->code);
+        }
+
+        $jsonResponse = $this->decodeRawBodyToJson($response->raw_body);
+
+
+        if (empty($jsonResponse['data']['user']['edge_highlight_reels'])) {
+            return [];
+        }
+
+        // print_r(
+        //     $jsonResponse['data']['user']['edge_highlight_reels']
+        // );
+        // exit;
+
+        $stories = [];
+        foreach ($jsonResponse['data']['user']['edge_highlight_reels']['edges'] as $highlight) {
+            $stories[] = HighLightReel::create($highlight['node']);
+        }
+
+        return $stories;
+    }
+
+    /**
+     * @param array $highlight_reel_ids - array of instagram hightlight reel ids
+     * @return array
+     * @throws InstagramException
+     */
+    public function getStoriesByHighlightReels(array $highlight_reel_ids)
+    {
+        $variables = [ "reel_ids" => [],"tag_names" => [],"location_ids" => [],"highlight_reel_ids" => [],"precomposed_overlay" => false,"show_story_viewer_list" => false,"story_viewer_fetch_count" => 0,"story_viewer_cursor" => "","stories_video_dash_manifest" => false];
+        $variables['highlight_reel_ids'] = $highlight_reel_ids;
+        
+        $response = Request::get(Endpoints::getStoriesLink($variables),
+            $this->generateHeaders($this->userSession));
+
+        if ($response->code !== static::HTTP_OK) {
+            throw new InstagramException('Response code is ' . $response->code . '. Body: ' . static::getErrorBody($response->body) . ' Something went wrong. Please report issue.', $response->code);
+        }
+
+        $jsonResponse = $this->decodeRawBodyToJson($response->raw_body);
+
+        if (empty($jsonResponse['data']['reels_media'])) {
+            return [];
+        }
+        
+        $stories = [];
+        foreach ($jsonResponse['data']['reels_media'] as $user) {
+            $UserStories = UserStories::create();
+            $UserStories->setOwner(Account::create($user['owner']));
+            foreach ($user['items'] as $item) {
+                $UserStories->addStory(Story::create($item));
+            }
+            $stories[] = $UserStories;
+        }
+        return $stories;
+    }
+    
     /**
      * @param array $tags - array of instagram tags
      * @return array

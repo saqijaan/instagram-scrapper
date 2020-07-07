@@ -200,6 +200,12 @@ class Endpoints
         return $url;
     }
 
+    public static function getHighlightedStories($variables)
+    {
+        $url = self::getGraphQlUrl(InstagramQueryId::HIGHLIGHTED_STORIES_HASH, ['variables' => json_encode($variables)]);
+        return $url;
+    }
+
     public static function getLikeUrl($mediaId)
     {
         return str_replace('{mediaId}', urlencode($mediaId), static::LIKE_URL);
