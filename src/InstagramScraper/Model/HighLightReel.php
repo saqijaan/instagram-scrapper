@@ -16,12 +16,12 @@ class HighLightReel extends Media
     /**
      * @var string
      */
-    protected $name;
+    protected $title;
 
-    /**
-     * @var string
-     */
-    protected $display_url;
+    public function getTitle()
+    {
+        return $this->title;
+    }
 
     /***
      * We do not need some values - do not parse it for Story,
@@ -39,11 +39,11 @@ class HighLightReel extends Media
             break;
 
             case 'cover_media_cropped_thumbnail':
-                $this->display_url = $value['url'];
+                $this->imageStandardResolutionUrl = $value['url'];
             break;
 
             case 'title':
-                $this->name = $value;
+                $this->title = $value;
             break;
         }
     }
