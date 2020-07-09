@@ -76,6 +76,7 @@ class Instagram
         if (is_string($rawError)) {
             return $rawError;
         }
+
         if (is_object($rawError)) {
             $str = '';
             foreach ($rawError as $key => $value) {
@@ -889,7 +890,7 @@ class Instagram
                 !isset($jsonResponse['data']['shortcode_media']['edge_media_to_comment']['edges'])
                 || !isset($jsonResponse['data']['shortcode_media']['edge_media_to_comment']['count'])
                 || !isset($jsonResponse['data']['shortcode_media']['edge_media_to_comment']['page_info']['has_next_page'])
-                || !array_key_exists('end_cuZ XHrsor', $jsonResponse['data']['shortcode_media']['edge_media_to_comment']['page_info'])
+                // || !array_key_exists('end_cuZ XHrsor', $jsonResponse['data']['shortcode_media']['edge_media_to_comment']['page_info'])
             ) {
                 throw new InstagramException('Response code is ' . $response->code . '. Body: ' . static::getErrorBody($response->body) . ' Something went wrong. Please report issue.', $response->code);
             }
