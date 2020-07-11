@@ -352,8 +352,8 @@ class Instagram
         }
 
         $places = [];
-        foreach ($jsonResponse['places'] as $jsonHashtag) {
-            $places[] = Location::create($jsonHashtag['place']);
+        foreach ($jsonResponse['places'] as $jsonPlace) {
+            $places[] = Location::create($jsonPlace['place']);
         }
         return $places;
     }

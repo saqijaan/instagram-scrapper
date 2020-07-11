@@ -9,7 +9,7 @@ class Location extends AbstractModel
      * @var array
      */
     protected static $initPropertiesMap = [
-        'id' => 'id',
+        'location' => 'id',
         'has_public_page' => 'hasPublicPage',
         'name' => 'name',
         'slug' => 'slug',
@@ -105,5 +105,25 @@ class Location extends AbstractModel
     public function getModified()
     {
         return $this->modified;
+    }
+
+    protected function initPropertiesCustom($value, $prop, $props)
+    {
+        switch($prop){
+            case 'title':
+                $this->name = $value;
+            break;
+
+            case 'slug':
+                $this->slug = $value;
+            break;
+
+            case 'location':
+                $this->id = $value['pk'];
+                // print_r($value); exit;
+                $this->lat = isset($value['lat']) ? $value['lat'] : null;
+                $this->lng = isset($value['lng']) ? $value['lng'] : null;
+            break;
+        }
     }
 }
