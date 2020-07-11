@@ -38,6 +38,10 @@ class HighLightReel extends Media
                 $this->id = $value;
             break;
 
+            case 'owner':
+                $this->owner = Account::create($value);
+            break;
+
             case 'cover_media_cropped_thumbnail':
                 $this->imageStandardResolutionUrl = $value['url'];
             break;

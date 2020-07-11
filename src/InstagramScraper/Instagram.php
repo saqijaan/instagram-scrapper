@@ -262,7 +262,7 @@ class Instagram
      */
     public function searchAccountsByUsername($username, $count = 10)
     {
-        $response = Request::get(Endpoints::getGeneralSearchJsonLink($username, $count), $this->generateHeaders($this->userSession));
+        $response = Request::get(Endpoints::getGeneralSearchJsonLink($username,'user', $count), $this->generateHeaders($this->userSession));
 
         if (static::HTTP_NOT_FOUND === $response->code) {
             throw new InstagramNotFoundException('Account with given username does not exist.');
@@ -297,7 +297,7 @@ class Instagram
     public function searchTagsByTagName($tag)
     {
         // TODO: Add tests and auth
-        $response = Request::get(Endpoints::getGeneralSearchJsonLink($tag));
+        $response = Request::get(Endpoints::getGeneralSearchJsonLink($tag,'hashtag',100));
 
         if (static::HTTP_NOT_FOUND === $response->code) {
             throw new InstagramNotFoundException('Account with given username does not exist.');
@@ -332,7 +332,7 @@ class Instagram
     public function searchPlacesByName($place)
     {
         // TODO: Add tests and auth
-        $response = Request::get(Endpoints::getGeneralSearchJsonLink($tag));
+        $response = Request::get(Endpoints::getGeneralSearchJsonLink($place,'place',100));
 
         if (static::HTTP_NOT_FOUND === $response->code) {
             throw new InstagramNotFoundException('Account with given username does not exist.');
@@ -368,7 +368,7 @@ class Instagram
     public function searchAllByName($query)
     {
         // TODO: Add tests and auth
-        $response = Request::get(Endpoints::getGeneralSearchJsonLink($query));
+        $response = Request::get(Endpoints::getGeneralSearchJsonLink($query,'blended'));
 
         if (static::HTTP_NOT_FOUND === $response->code) {
             throw new InstagramNotFoundException('Account with given username does not exist.');
@@ -1628,11 +1628,6 @@ class Instagram
         if (empty($jsonResponse['data']['user']['edge_highlight_reels'])) {
             return [];
         }
-
-        // print_r(
-        //     $jsonResponse['data']['user']['edge_highlight_reels']
-        // );
-        // exit;
 
         $stories = [];
         foreach ($jsonResponse['data']['user']['edge_highlight_reels']['edges'] as $highlight) {
