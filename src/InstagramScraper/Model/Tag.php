@@ -30,6 +30,11 @@ class Tag extends AbstractModel
     protected $id;
 
     /**
+     * @var string
+     */
+    protected $profile_pic;
+
+    /**
      * @return int
      */
     public function getMediaCount()
@@ -51,5 +56,34 @@ class Tag extends AbstractModel
     public function getId()
     {
         return $this->id;
+    }
+
+    /**
+     * @return int
+     */
+    public function getProfilePic()
+    {
+        return $this->profile_pic;
+    }
+
+    protected function initPropertiesCustom($value, $prop, $props)
+    {
+        switch($prop){
+            case 'id':
+                $this->id = $value;
+            break;
+
+            case 'name':
+                $this->name = $value;
+            break;
+
+            case 'media_count':
+                $this->mediaCount = $value;
+            break;
+
+            case 'profile_pic_url':
+                $this->profile_pic = $value;
+            break;
+        }
     }
 }
