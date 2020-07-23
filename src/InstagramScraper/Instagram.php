@@ -685,6 +685,42 @@ class Instagram
     }
 
     /**
+     * @param $shortCode
+     *
+     * @return Media
+     * @throws InstagramException
+     * @throws InstagramNotFoundException
+     */
+    public function getMediaByShortCode($shortCode)
+    {
+        $variables = [
+            "shortcode" => $shortCode,
+            "child_comment_count" => 3,
+            "fetch_comment_count" => 1,
+            "parent_comment_count" => 1,
+            "has_threaded_comments" => false,
+        ];
+
+        $url = Endpoints::getMediaLink($variables);
+
+        $response = Request::get($url, $this->generateHeaders($this->userSession));
+
+        if (static::HTTP_NOT_FOUND === $response->code) {
+            throw new InstagramNotFoundException('Media with given code does not exist or account is private.');
+        }
+
+        if (static::HTTP_OK !== $response->code) {
+            throw new InstagramException('Response code is ' . $response->code . '. Body: ' . static::getErrorBody($response->body) . ' Something went wrong. Please report issue.', $response->code);
+        }
+
+        $mediaArray = $this->decodeRawBodyToJson($response->raw_body);
+        if (!isset($mediaArray['data']['shortcode_media'])) {
+            throw new InstagramException('Media with this code does not exist');
+        }
+        return Media::create($mediaArray['data']['shortcode_media']);
+    }
+
+    /**
      * @param $mediaId
      *
      * @return Media
@@ -693,8 +729,9 @@ class Instagram
      */
     public function getMediaById($mediaId)
     {
-        $mediaLink = Media::getLinkFromId($mediaId);
-        return $this->getMediaByUrl($mediaLink);
+        $mediaCode = Media::getCodeFromId($mediaId);
+
+        return $this->getMediaByShortCode($mediaCode);
     }
 
     /**

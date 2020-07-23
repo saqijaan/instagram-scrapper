@@ -195,6 +195,12 @@ class Endpoints
         return $url;
     }
 
+    public static function getMediaLink($variables)
+    {
+        $url = self::getGraphQlUrl(InstagramQueryId::MEDIA_HASH, ['variables' => json_encode($variables)]);
+        return $url;
+    }
+
     public static function getStoriesLink($variables)
     {
         $url = self::getGraphQlUrl(InstagramQueryId::STORIES_HASH, ['variables' => json_encode($variables)]);
